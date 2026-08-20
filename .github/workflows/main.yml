@@ -1,0 +1,68 @@
+name: Deploy full stack app on AWS EC2
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+ deploy:
+   runs-on: self-hosted
+
+   steps:
+   - name: Checkout code
+    uses: actions/checkout@v4
+   
+   - name: Set up Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        # Optional: cache dependencies for faster builds (npm, yarn, or pnpm)
+        cache: 'npm'
+        cache-dependency-path: |
+            Backend/package-lock.json
+            Frontend/package-lock.json
+
+      # ------------------------------
+      # BACKEND SETUP
+      # ------------------------------
+
+       - name: Install backend dependencies
+        working-directory: ./Backend
+        run: npm install
+
+        - name: Create backend .env file
+        working-directory: ./Backend
+        run: |
+          touch .env
+          echo "${{ RBAC_SECRET.JWT_SECRET }} \n ${{ PORT}} \n ${{ DB_URI }} \n ${{ Razor_Test_Key_ID }} \n ${{ Razor_Test_Key_Secret }}" > .env
+
+       - name: Create backend .env file
+        working-directory: ./Backend
+        run: |
+          pm2 restart RBAC-Backend || pm2 start npm --name "RBAC-Backend" -- start
+
+        # ------------------------------
+        # FRONTEND SETUP
+        # ------------------------------
+      - name: Clean npm cache & remove existing dependencies
+        working-directory: ./Frontend
+        run: |
+          rm -rf node_modules package-lock.json
+          npm cache clean --force
+
+      - name: Install frontend dependencies
+        working-directory: ./Frontend
+        run: npm install
+
+      - name: Build frontend
+        working-directory: ./Frontend
+        run: npm run build
+
+      - name: Deploy frontend to Nginx
+        run: |
+          sudo rm -rf /var/www/html/*
+          sudo scp -r ./dist/* /var/www/html/  
+
+        
+   
