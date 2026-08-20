@@ -32,11 +32,9 @@ jobs:
 
       - name: Create backend .env file
         working-directory: ./Backend
-        env:
-          Razor_Test_Key_ID: ${{ secrets.Razor_Test_Key_ID }}
-          Razor_Test_Key_Secret: ${{ secrets.Razor_Test_Key_Secret }}
         run: |
-          echo "Connecting to service..."
+          echo "Razor_Test_Key_ID = ${{ secrets.Razor_Test_Key_ID }}" >> .env
+          echo "Razor_Test_Key_Secret = ${{ secrets.Razor_Test_Key_Secret }}" >> .env
 
       - name: Run node server
         working-directory: ./Backend
