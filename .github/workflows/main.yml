@@ -9,13 +9,14 @@ jobs:
   deploy:
     name: deployment
     runs-on: self-hosted
+		
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
    
       - name: Set up Node.js 22.14.0
-      uses: actions/setup-node@v4
-      with:
+        uses: actions/setup-node@v4
+        with:
         node-version: 22.14.0
         # Optional: cache dependencies for faster builds (npm, yarn, or pnpm)
         cache: 'npm'
@@ -23,21 +24,20 @@ jobs:
             Backend/package-lock.json
             Frontend/package-lock.json
 
-      # ------------------------------
-      # BACKEND SETUP
-      # ------------------------------
-
-       - name: Install backend dependencies
+			# ------------------------------
+			# BACKEND SETUP
+			# ------------------------------
+      - name: Install backend dependencies
         working-directory: ./Backend
         run: npm install
 
-        - name: Create backend .env file
+      - name: Create backend .env file
         working-directory: ./Backend
         run: |
           touch .env
           echo "${{ RBAC_SECRET.JWT_SECRET }} \n ${{ PORT}} \n ${{ DB_URI }} \n ${{ Razor_Test_Key_ID }} \n ${{ Razor_Test_Key_Secret }}" > .env
 
-       - name: Create backend .env file
+      - name: Create backend .env file
         working-directory: ./Backend
         run: |
           pm2 restart RBAC-Backend || pm2 start npm --name "RBAC-Backend" -- start
