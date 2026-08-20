@@ -5,6 +5,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const authRoute = require("./routes/authRoute");
+const razorpayRoute = require("./routes/razorPayRoute");
 const app = express();
 
 const clientOptions = {
@@ -15,6 +16,7 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 app.use(express.json());
 app.use("/", authRoute);
+app.use("/", razorpayRoute);
 
 try {
   mongoose.connect(process.env.DB_URI, clientOptions);

@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const instance = require("../utils/razorpay");
+const Payment = require("../models/razorPay");
 exports.loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -90,3 +92,39 @@ exports.getProfileController = async (req, res) => {
   }
 };
 exports.updateProfileController = async (req, res) => {};
+exports.razorPayController = async (req, res) => {
+  try {
+    const { amount, currency, receipt } = req.body;
+
+    // Razorpay expects the amount in the smallest currency sub-unit (e.g., paise for INR, cents for USD)
+    // Example: To charge ₹500, pass 50000 paise
+    const options = {
+      amount: amount,
+      currency: currency || "INR",
+      receipt: receipt || `receipt_rcpt_${Date.now()}`,
+      // Optional: Add metadata
+      notes: {
+        description: "E-commerce order transaction",
+      },
+    };
+    const order = await instance.orders.create(options);
+    console.log(order);
+    if (!order) {
+      return res
+        .status(500)
+        .send("An error occurred while generating the order.");
+    }
+    const payment = new Payment({
+      userId: req.user.id,
+      razorpayOrderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+    });
+    await payment.save();
+    // Send the generated order object back to the client side
+    res.status(200).json({ order, key_id: process.env.Razor_Test_Key_ID });
+  } catch (error) {
+    console.error("Razorpay Order Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};

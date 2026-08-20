@@ -44,11 +44,49 @@ export default function Login() {
               withCredentials: true,
             }
           )
-          .then((res) => {
+          .then(async (res) => {
             console.log("res,", res);
             login(res.data.token, res.data.user);
             setSuccess(res.message);
-            navigate("/profile");
+            const order = await axios.post(
+              `${BASE_URI}/create-order`,
+              {
+                amount: 100,
+                currency: "INR",
+                receipt: "receicpt_1",
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${res.data.token}`,
+                },
+                withCredentials: true,
+              }
+            );
+            const { data } = order;
+            // Open Razorpay Checkout
+            console.log(data);
+            const options = {
+              key: data.key_id, // Replace with your Razorpay key_id
+              amount: data.order.amount, // Amount is in currency subunits.
+              currency: "INR",
+              name: "Acme Corp",
+              description: "Test Transaction",
+              order_id: data.order.id, // This is the order_id created in the backend
+              prefill: {
+                name: "Gaurav Kumar",
+                email: "gaurav.kumar@example.com",
+                contact: "9999999999",
+              },
+              theme: {
+                color: "#F37254",
+              },
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+
+            // navigate("/profile");
           });
       } catch (err) {
         const serverMessage = err.response?.data?.message || err.message;
