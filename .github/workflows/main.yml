@@ -20,12 +20,12 @@ jobs:
         # Optional: cache dependencies for faster builds (npm, yarn, or pnpm)
         cache: 'npm'
         cache-dependency-path: |
-            Backend/package-lock.json
-            Frontend/package-lock.json
+         Backend/package-lock.json
+         Frontend/package-lock.json
 
-			# ------------------------------
-			# BACKEND SETUP
-			# ------------------------------
+ # ------------------------------
+# BACKEND SETUP
+# ------------------------------
       - name: Install backend dependencies
         working-directory: ./Backend
         run: npm install
