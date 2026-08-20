@@ -34,7 +34,7 @@ jobs:
         working-directory: ./Backend
         run: |
           touch .env
-          echo "${{ RBAC_SECRET.JWT_SECRET }} \n ${{ PORT}} \n ${{ DB_URI }} \n ${{ Razor_Test_Key_ID }} \n ${{ Razor_Test_Key_Secret }}" > .env
+          echo "${{ secrets.JWT_SECRET }} \n ${{ secrets.PORT}} \n ${{ secrets.DB_URI }} \n ${{ secrets.Razor_Test_Key_ID }} \n ${{ secrets.Razor_Test_Key_Secret }}" > .env
 
       - name: Create backend .env file
         working-directory: ./Backend
