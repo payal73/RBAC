@@ -3,7 +3,7 @@ name: Deploy full stack app on AWS EC2
 on:
   push:
     branches:
-    - main
+      - main
 
 jobs:
   deploy:
@@ -12,31 +12,33 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-   
+
       - name: Set up Node.js 22.14.0
         uses: actions/setup-node@v4
         with:
-            node-version: 22.14.0
-            # Optional: cache dependencies for faster builds (npm, yarn, or pnpm)
-            cache: 'npm'
-            cache-dependency-path: |
-             Backend/package-lock.json
-             Frontend/package-lock.json
+          node-version: 22.14.0
+          # Optional: cache dependencies for faster builds (npm, yarn, or pnpm)
+          cache: "npm"
+          cache-dependency-path: |
+            Backend/package-lock.json
+            Frontend/package-lock.json
 
-# ------------------------------
-# BACKEND SETUP
-# ------------------------------
+      # ------------------------------
+      # BACKEND SETUP
+      # ------------------------------
       - name: Install backend dependencies
         working-directory: ./Backend
         run: npm install
 
       - name: Create backend .env file
         working-directory: ./Backend
+        env:
+          Razor_Test_Key_ID: ${{ secrets.Razor_Test_Key_ID }}
+          Razor_Test_Key_Secret: ${{ secrets.Razor_Test_Key_Secret }}
         run: |
-          touch .env
-          echo "${{ secrets.JWT_SECRET }} \n ${{ secrets.PORT}} \n ${{ secrets.DB_URI }} \n ${{ secrets.Razor_Test_Key_ID }} \n ${{ secrets.Razor_Test_Key_Secret }}" > .env
+          echo "Connecting to service..."
 
-      - name: Create backend .env file
+      - name: Run node server
         working-directory: ./Backend
         run: |
           pm2 restart 0 || pm2 start npm --name "RBAC-Backend" -- start
@@ -62,7 +64,4 @@ jobs:
         working-directory: ./Frontend
         run: |
           sudo rm -rf /var/www/html/*
-          sudo scp -r ./dist/* /var/www/html/  
-
-        
-   
+          sudo scp -r ./dist/* /var/www/html/
