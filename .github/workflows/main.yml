@@ -35,6 +35,9 @@ jobs:
         run: |
           echo "Razor_Test_Key_ID = ${{ secrets.Razor_Test_Key_ID }}" >> .env
           echo "Razor_Test_Key_Secret = ${{ secrets.Razor_Test_Key_Secret }}" >> .env
+          echo "JWT_SECRET = ${{secrets.JWT_SECRET }}" >> .env
+          echo "PORT = ${{ secrets.PORT }}" >> .env
+          echo "DB_URI = ${{ secrets.DB_URI }}" >> .env
 
       - name: Run node server
         working-directory: ./Backend
@@ -52,7 +55,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: ./Frontend
-        run: npm install
+        run: npm install.en
 
       - name: Build frontend
         working-directory: ./Frontend
