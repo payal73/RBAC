@@ -33,11 +33,11 @@ jobs:
       - name: Create backend .env file
         working-directory: ./Backend
         run: |
-          echo "Razor_Test_Key_ID = "${{ secrets.Razor_Test_Key_ID }}"" >> .env
-          echo "Razor_Test_Key_Secret = "${{ secrets.Razor_Test_Key_Secret }}"" >> .env
+          echo "Razor_Test_Key_ID = '${{ secrets.Razor_Test_Key_ID }}'" >> .env
+          echo "Razor_Test_Key_Secret = '${{ secrets.Razor_Test_Key_Secret }}'" >> .env
           echo "JWT_SECRET = ${{secrets.JWT_SECRET }}" >> .env
           echo "PORT = ${{ secrets.PORT }}" >> .env
-          echo "DB_URI = "${{ secrets.DB_URI }}"" >> .env
+          echo "DB_URI = '${{ secrets.DB_URI }}'" >> .env
 
       - name: Run node server
         working-directory: ./Backend
