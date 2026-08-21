@@ -6,7 +6,9 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.9.0",
-    "nodemon": "^3.1.14"
+    "node-cron": "^4.6.0",
+    "nodemon": "^3.1.14",
+    "razorpay": "^2.9.8"
   },
   "name": "rbac",
   "version": "1.0.0",
